@@ -478,7 +478,7 @@ u=rwx,g=rx,o=rx
 
 ### 3.文件搜索命令
 
-find
+#### 1.find
 
 文件搜索
 
@@ -568,3 +568,132 @@ root@wintrys:~/lee# find -inum 1314486
 ./lwl.txt
 ```
 
+#### 2.locate
+
+在文件资料库中查找文件
+
+-i  不区分大小写
+
+updatedb   更新文件资料库
+
+```shell
+root@wintrys:~# locate newname.conf 
+/root/newname.conf
+/root/lee/newname.conf
+/root/lee/newname.conf.hard
+/root/lee/newname.conf.soft
+root@wintrys:~# updatedb
+```
+
+#### 3.which
+
+搜索命令所在目录及别名信息
+
+```shell
+root@wintrys:~# which ls
+/usr/bin/ls
+root@wintrys:~# which cp
+/usr/bin/cp
+```
+
+#### 4.whereis
+
+搜索命令所在目录及帮助文档路径
+
+```shell
+root@wintrys:~# whereis rm
+rm: /usr/bin/rm /usr/share/man/man1/rm.1.gz
+```
+
+#### 5.grep
+
+在文件中搜索字串匹配的行并输出
+
+-i 不区分大小写
+
+-v 排除指定字串
+
+```shell
+root@wintrys:~# grep -v ^# newname.conf     
+user www-data;
+worker_processes auto;
+pid /run/nginx.pid;
+include /etc/nginx/modules-enabled/*.conf;
+
+events {
+        worker_connections 768;
+        # multi_accept on;
+}
+
+```
+
+### 4.帮助命令
+
+#### 1.man
+
+获得帮助信息
+
+1  对应命令的帮助，5 配置文件的帮助
+
+#### 2.help
+
+获得shell内置命令的帮助信息
+
+### 5.用户管理命令
+
+#### 1.useradd
+
+添加新用户
+
+```shell
+root@wintrys:~# useradd liwanlin
+useradd: user 'liwanlin' already exists
+```
+
+#### 2.passwd
+
+设置用户密码
+
+#### 3.who
+
+查看登录用户信息
+
+```shell
+root@wintrys:~# who
+root     pts/0        2022-01-07 17:03 (113.201.129.29)
+liwanlin pts/1        2022-01-07 16:16 (113.201.129.29)
+liwanlin pts/2        2022-01-07 16:28 (113.201.129.29)
+liwanlin pts/3        2022-01-07 16:34 (113.201.129.29)
+liwanlin pts/4        2022-01-07 17:11 (113.201.129.29)
+```
+
+tty 本地终端   pts远程终端        登录时间    登录IP
+
+#### 4.w
+
+查看登录用户详细信息
+
+```shell
+root@wintrys:~# w
+ 17:22:34 up 5 days,  3:58,  6 users,  load average: 0.00, 0.02, 0.00
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+root     pts/0    113.201.129.29   17:03    1.00s  0.02s  0.00s w
+liwanlin pts/1    113.201.129.29   16:16    1:05m  0.00s  0.00s -sh
+liwanlin pts/2    113.201.129.29   16:28   54:13   0.00s  0.00s -sh
+liwanlin pts/3    113.201.129.29   16:34   47:41   0.00s  0.00s -sh
+liwanlin pts/4    113.201.129.29   17:11    9:59   0.01s  0.01s -bash
+liwanlin pts/5    113.201.129.29   17:17    4:34   0.02s  0.02s -bash
+```
+
+第一行 up表示系统连续运行的时间   最后参数表示系统负载情况
+
+```shell
+root@wintrys:~# uptime
+ 17:26:43 up 5 days,  4:02,  7 users,  load average: 0.05, 0.04, 0.00
+```
+
+### 6.压缩解压命令
+
+#### 1.gzip
+
+压缩文件 格式： .gz  
