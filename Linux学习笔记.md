@@ -697,3 +697,31 @@ root@wintrys:~# uptime
 #### 1.gzip
 
 压缩文件 格式： .gz  
+
+```shell
+root@wintrys:~# touch testgizp  
+root@wintrys:~# gzip testgizp 
+root@wintrys:~# ls -l
+total 16
+drwxr-xr-x 5 root root 4096 Jan  6 20:31 lee
+-rw-r--r-- 1 root root 1490 Jul 13 21:44 newname.conf
+-rw-r--r-- 1 root root   29 Jan  8 12:06 testgizp.gz
+drwxr-xr-x 7 root root 4096 Jul 10 23:31 zbx
+```
+
+####   2.gunzip
+
+解压缩.gz的压缩文件      或者 gzip -d
+
+**只能压缩文件。**
+
+```shell
+root@wintrys:~# gunzip testgizp.gz 
+root@wintrys:~# ls -l
+total 12
+drwxr-xr-x 5 root root 4096 Jan  6 20:31 lee
+-rw-r--r-- 1 root root 1490 Jul 13 21:44 newname.conf
+-rw-r--r-- 1 root root    0 Jan  8 12:06 testgizp
+drwxr-xr-x 7 root root 4096 Jul 10 23:31 zbx
+```
+
