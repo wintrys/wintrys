@@ -713,7 +713,7 @@ drwxr-xr-x 7 root root 4096 Jul 10 23:31 zbx
 
 解压缩.gz的压缩文件      或者 gzip -d
 
-**只能压缩文件。**
+**只能压缩文件，不保留源文件**
 
 ```shell
 root@wintrys:~# gunzip testgizp.gz 
@@ -723,5 +723,346 @@ drwxr-xr-x 5 root root 4096 Jan  6 20:31 lee
 -rw-r--r-- 1 root root 1490 Jul 13 21:44 newname.conf
 -rw-r--r-- 1 root root    0 Jan  8 12:06 testgizp
 drwxr-xr-x 7 root root 4096 Jul 10 23:31 zbx
+```
+
+#### 3.tar
+
+打包目录
+
+-c  打包
+
+-v 显示详细信息
+
+-f 指定文件名
+
+-z 打包同时压缩
+
+```shell
+root@wintrys:~# tar -cvf Japan.tar Japan
+Japan/          
+Japan/boduo
+Japan/longze
+Japan/canglaoshi
+root@wintrys:~# ls -l
+total 28
+drwxr-xr-x 2 root root  4096 Jan  8 14:48 Japan
+-rw-r--r-- 1 root root 10240 Jan  8 14:49 Japan.tar
+drwxr-xr-x 5 root root  4096 Jan  6 20:31 lee
+-rw-r--r-- 1 root root  1490 Jul 13 21:44 newname.conf
+-rw-r--r-- 1 root root     0 Jan  8 12:06 testgizp
+drwxr-xr-x 7 root root  4096 Jul 10 23:31 zbx
+```
+
+在对打包文件进行压缩
+
+```shell
+root@wintrys:~# gzip Japan.tar 
+root@wintrys:~# ls
+Japan  Japan.tar.gz  lee  newname.conf  testgizp  zbx
+```
+
+Japan.tar.gz 最常见的代码打包方式
+
+参数加 -z 一步到位
+
+```shell
+root@wintrys:~# tar -zcf Japan.tar.gz Japan
+root@wintrys:~# ls -l
+total 20
+drwxr-xr-x 2 root root 4096 Jan  8 14:48 Japan
+-rw-r--r-- 1 root root  189 Jan  8 14:54 Japan.tar.gz
+drwxr-xr-x 5 root root 4096 Jan  6 20:31 lee
+-rw-r--r-- 1 root root 1490 Jul 13 21:44 newname.conf
+-rw-r--r-- 1 root root    0 Jan  8 12:06 testgizp
+drwxr-xr-x 7 root root 4096 Jul 10 23:31 zbx
+```
+
+解压用 -x
+
+```shell
+root@wintrys:~# tar -zxvf Japan.tar.gz 
+Japan/
+Japan/boduo
+Japan/longze
+Japan/canglaoshi
+root@wintrys:~# ls -l
+total 20
+drwxr-xr-x 2 root root 4096 Jan  8 14:48 Japan
+-rw-r--r-- 1 root root  189 Jan  8 14:54 Japan.tar.gz
+drwxr-xr-x 5 root root 4096 Jan  6 20:31 lee
+-rw-r--r-- 1 root root 1490 Jul 13 21:44 newname.conf
+-rw-r--r-- 1 root root    0 Jan  8 12:06 testgizp
+drwxr-xr-x 7 root root 4096 Jul 10 23:31 zbx
+```
+
+#### 4.zip
+
+压缩文件或目录
+
+**能保留源文件**
+
+```shell
+root@wintrys:~# ls
+boduo  Japan  Japan.tar.gz  lee  newname.conf  testgizp  zbx
+root@wintrys:~# zip boduo.zip boduo 
+  adding: boduo (stored 0%)
+root@wintrys:~# ls
+boduo      Japan         lee           testgizp
+boduo.zip  Japan.tar.gz  newname.conf  zbx
+```
+
+-r  压缩目录
+
+```shell
+root@wintrys:~# zip -r Japan.zip Japan
+  adding: Japan/ (stored 0%)
+  adding: Japan/boduo (stored 0%)
+  adding: Japan/longze (stored 0%)
+  adding: Japan/canglaoshi (stored 0%)
+```
+
+#### 5.unzip
+
+解压.zip的压缩文件
+
+```shell
+root@wintrys:~# unzip Japan.zip 
+Archive:  Japan.zip
+   creating: Japan/
+ extracting: Japan/boduo             
+ extracting: Japan/longze            
+ extracting: Japan/canglaoshi
+```
+
+#### 6.bzip2
+
+压缩文件
+
+-k 产生压缩文件后保留源文件
+
+```shell
+root@wintrys:~# bzip2 boduo
+root@wintrys:~# ls
+boduo.bz2  Japan         Japan.zip  newname.conf  zbx
+boduo.zip  Japan.tar.gz  lee        testgizp
+```
+
+#### 7.bunzip2
+
+解压bzip2文件
+
+```shell
+root@wintrys:~# bunzip2 boduo.bz2 
+root@wintrys:~# ls
+boduo      Japan         Japan.zip  newname.conf  zbx
+boduo.zip  Japan.tar.gz  lee        testgizp
+```
+
+### 7.网络命令
+
+#### 1.write
+
+给在线用户发消息  用Ctrl+D保存发送
+
+```shell
+root@wintrys:~# write liwanlin
+write: write: you have write permission turned off.
+
+hello world
+```
+
+```shell
+liwanlin@wintrys:~$ 
+Message from root@wintrys on pts/2 at 21:32 ...
+helle world
+EOF
+```
+
+#### 2.wall
+
+给所有用户发广播
+
+```shell
+root@wintrys:~# wall wo shi zgr!
+                                                                               
+Broadcast message from root@wintrys (pts/2) (Sat Jan  8 21:38:46 2022):        
+                                                                               
+wo shi zgr!
+```
+
+自己也会收到。
+
+#### 3.ping
+
+测试网络连通性
+
+-c  次数
+
+```shell
+root@wintrys:~# ping -c 4 www.baidu.com
+PING www.a.shifen.com (180.101.49.12) 56(84) bytes of data.
+64 bytes from 180.101.49.12 (180.101.49.12): icmp_seq=1 ttl=50 time=15.2 ms
+64 bytes from 180.101.49.12 (180.101.49.12): icmp_seq=2 ttl=50 time=15.3 ms
+64 bytes from 180.101.49.12 (180.101.49.12): icmp_seq=3 ttl=50 time=15.3 ms
+64 bytes from 180.101.49.12 (180.101.49.12): icmp_seq=4 ttl=50 time=15.3 ms
+
+--- www.a.shifen.com ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 3004ms
+rtt min/avg/max/mdev = 15.225/15.256/15.275/0.019 ms
+```
+
+#### 4.ifconfig
+
+查看和设置网卡信息
+
+ifconfig eth0 192.168.8.250
+
+#### 5.mail
+
+查看发送电子邮件
+
+mail [用户名]
+
+用Ctrl+D保存发送
+
+#### 6.last
+
+列出目前与过去登入系统的用户信息
+
+```shell
+root@wintrys:~# last
+liwanlin pts/3        123.139.17.29    Sat Jan  8 21:31   still logged in
+root     pts/2        123.139.17.29    Sat Jan  8 21:14   still logged in
+root     pts/0        123.139.17.29    Sat Jan  8 20:35   still logged in
+root     pts/1        123.139.17.29    Sat Jan  8 17:04   still logged in
+root     pts/0        113.201.129.29   Sat Jan  8 12:02 - 19:17  (07:15)
+liwanlin pts/1        113.201.129.29   Fri Jan  7 21:26 - 23:39  (02:12)
+```
+
+#### 7.lastlog
+
+检查某特定用户上次登录的信息
+
+```shell
+root@wintrys:~# lastlog -u liwanlin
+Username         Port     From             Latest
+liwanlin         pts/4    123.139.17.29    Sat Jan  8 21:51:07 +0800 2022
+```
+
+#### 8.traceroute
+
+显示数据包到主机间的路径  (每一个节点)
+
+用于定位那个节点出问题
+
+```shell
+root@wintrys:~# traceroute www.sina.com.cn
+traceroute to www.sina.com.cn (39.96.118.196), 30 hops max, 60 byte packets
+ 1  10.4.16.74 (10.4.16.74)  1.886 ms  1.919 ms  1.881 ms
+ 2  * * 10.4.20.13 (10.4.20.13)  2.364 ms
+ 3  10.102.239.41 (10.102.239.41)  2.003 ms 10.102.239.109 (10.102.239.109)  2.065 ms 10.54.235.133 (10.54.235.133)  6.509 ms
+ 4  * 11.94.128.74 (11.94.128.74)  5.619 ms 11.94.128.26 (11.94.128.26)  3.889 ms
+ 5  10.102.41.122 (10.102.41.122)  26.418 ms 10.102.50.10 (10.102.50.10)  28.913 ms  28.771 ms
+ 6  140.205.27.149 (140.205.27.149)  29.666 ms  31.349 ms 117.49.45.109 (117.49.45.109)  25.570 ms
+```
+
+#### 9.netstat
+
+显示网络相关信息
+
+-t  TCP协议
+
+-u  UDP协议
+
+-l   监听
+
+-r  路由
+
+-n  显示IP地址和端口
+
+netstat -tlun  查看本机监听的端口
+
+```shell
+root@wintrys:~# netstat -tlun
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State      
+tcp        0      0 0.0.0.0:80              0.0.0.0:*               LISTEN     
+tcp        0      0 127.0.0.53:53           0.0.0.0:*               LISTEN     
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN     
+tcp6       0      0 :::80                   :::*                    LISTEN     
+udp        0      0 127.0.0.1:323           0.0.0.0:*                           # udp协议没有监听状态
+udp        0      0 127.0.0.53:53           0.0.0.0:*                          
+udp        0      0 172.17.228.126:68       0.0.0.0:*                          
+udp6       0      0 ::1:323                 :::*
+```
+
+netstat -an   查看本机所有的网络连接
+
+```shell
+root@wintrys:~# netstat -an
+Active Internet connections (servers and established)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State      
+tcp        0      0 0.0.0.0:80              0.0.0.0:*               LISTEN     
+tcp        0      0 127.0.0.53:53           0.0.0.0:*               LISTEN     
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN     
+tcp        0      0 172.17.228.126:43938    100.100.30.26:80        ESTABLISHED    #正在连接状态
+tcp        0      0 172.17.228.126:22       123.139.17.29:14562     ESTABLISHED
+tcp        0      0 172.17.228.126:22       123.139.17.29:15021     ESTABLISHED
+tcp        0      0 172.17.228.126:22       123.139.17.29:17057     ESTABLISHED
+tcp        0      0 172.17.228.126:22       123.139.17.29:16108     ESTABLISHED
+tcp        0      0 172.17.228.126:53246    100.100.45.186:80       TIME_WAIT  
+tcp        0      0 172.17.228.126:43438    100.100.45.106:443      TIME_WAIT  
+tcp        0      0 172.17.228.126:53242    100.100.45.186:80       TIME_WAIT  
+tcp        0      0 172.17.228.126:22       123.139.17.29:16583     ESTABLISHED
+tcp6       0      0 :::80                   :::*                    LISTEN  
+```
+
+#### 10.mount
+
+mout [-t 文件系统] 设备文件名 挂载点
+
+### 8.关机重启命令
+
+#### 1.shutdown
+
+-c 取消前一个关机命令
+
+-h 关机
+
+-r  重启
+
+#### 2.其他关机命令
+
+halt
+
+poweroff
+
+init 0
+
+#### 3.其他重启命令
+
+reboot
+
+init 6
+
+#### 4.系统运行级别
+
+0 关机       init 0
+
+1 单用户(只启动最小核心程序)
+
+2  不完全多用户，不含NFS服务
+
+3  完全多用户
+
+4  未分配
+
+5 图形界面
+
+6 重启     init 6
+
+```shell
+root@wintrys:/etc# runlevel
+N 5
 ```
 
