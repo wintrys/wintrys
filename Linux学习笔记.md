@@ -1,8 +1,13 @@
 
 
+# 0.系统分类
+
+- RedHat系列：Redhat、Centos、Fedora等
+- Debian系列：Debian、Ubuntu等
+
 # 1.系统分区
 
-## 1.分区
+## 1.分区	
 
 分区类型：
 
@@ -1069,4 +1074,259 @@ N 5
 #### 5.logout
 
 退出登录命令
+
+用完建议都要退出账号
+
+# 5.文本编辑器Vim
+
+### 1.Vim常用操作
+
+功能强大的文本编辑器，新建，编辑 ，显示。
+
+vi  filename  进入
+
+:wq   退出
+
+i a o 进去插入模式
+
+ESC  命令模式
+
+流程：vi  filename  进入-->命令模式-----(i,a,o)----->插入模式-----(ESC)----->命令模式-----(:wq)------.>退出
+
+误操作卡住Vim 可用 Ctrl+q 退出
+
+### 2.Vim使用技巧
+
+:r   /file  导入命令
+
+:map  快捷键
+
+# 6.软件包管理
+
+### 1.软件包分类
+
+源码包:     开源，安装慢。
+
+二进制包:   (RPM包，系统默认包)   不开源，安装快。
+
+### 2.RPM命令管理
+
+rpm -ivh  包名
+
+-i  install
+
+-v  显示信息
+
+-h  显示安装过程
+
+--nodeps   不检测依赖性    一般不用
+
+rpm -Uvh 包全名
+
+-U 升级
+
+rpm -e  包名
+
+-e  erase 卸载
+
+--nodeps   不检测依赖性    一般不用
+
+rpm -q  包名
+
+-q   query 查询
+
+-a  查询所有rpm包
+
+#### 1.rpm包命名原则
+
+**httpd-2.2.15-15.el6.centos.l.i686.rpm**      --->包全名
+
+httpd  软件包名
+
+2.2.15 软件版本
+
+15  软件发布次数
+
+el6.centos  适合的Linux平台
+
+i686  适合的硬件平台
+
+rpm rpm包扩展名
+
+#### 2.RPM包依赖性
+
+树形依赖:  a-->b-->c
+
+环形依赖：a-->b-->c-->a
+
+模块依赖：模块依赖查询网站 www.rpmfind.net
+
+#### 3.RPM包校验
+
+rpm -V 包名
+
+### 3.yum在线管理
+
+yum安装：
+
+　　安装：yum install 名称
+
+　　卸载：yum remove 名称
+
+　　更新：yum update  名称
+
+### 4.脚本安装包
+
+ webmin 可视化界面
+
+# 7.用户和用户组管理
+
+  服务器对安全性要求高，需建立合理的用户权限等级制度和服务器操作规范。
+
+### 1.用户配置文件
+
+  Linux中主要通过用户配置文件来查看和修改用户信息
+
+#### 1./etc/passwd 
+
+ 用户信息文件
+
+```shell
+root@wintrys:~# vim /etc/passwd
+
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/usr/sbin/nologin
+man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
+lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
+mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
+news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
+uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
+proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
+www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
+list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
+irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin
+gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
+nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+systemd-network:x:100:102:systemd Network Management,,,:/run/systemd:/usr/sbin/nologin
+systemd-resolve:x:101:103:systemd Resolver,,,:/run/systemd:/usr/sbin/nologin
+systemd-timesync:x:102:104:systemd Time Synchronization,,,:/run/systemd:/usr/sbin/nologin
+messagebus:x:103:106::/nonexistent:/usr/sbin/nologin
+syslog:x:104:110::/home/syslog:/usr/sbin/nologin
+_apt:x:105:65534::/nonexistent:/usr/sbin/nologin
+uuidd:x:106:112::/run/uuidd:/usr/sbin/nologin
+tcpdump:x:107:113::/nonexistent:/usr/sbin/nologin
+ntp:x:108:115::/nonexistent:/usr/sbin/nologin
+sshd:x:109:65534::/run/sshd:/usr/sbin/nologin
+systemd-coredump:x:999:999:systemd Core Dumper:/:/usr/sbin/nologin
+_chrony:x:110:121:Chrony daemon,,,:/var/lib/chrony:/usr/sbin/nologin
+liwanlin:x:1000:1000::/home/liwanlin:/bin/bash
+```
+
+第一个字段： 用户名称
+
+第二个字段：密码标志   x只是说明他有密码 (实际密码存在了shadow)
+
+第三个字段：UID(用户id)
+
+​            0：超级用户     **叫root的不一定是管理员，UID=0的不管叫啥就是管理员**    想把一个用户改成管理员，可以把他uid改为0即可。
+
+​            1-999：系统用户（伪用户）     centos  1-499
+
+​            1000-65535： 普通用户
+
+第四个字段：GID(用户初始组id)
+
+​          初始组：用户一登录就立刻拥有这个组的相关权限，**每个用户必须有一个初始组且只能有一个初始组。**
+
+​                         一般初始组组名和用户名相同，平常不建议更改。
+
+​          附加组：指用户可以加入多个其他的用户组，并拥有这些组的权限，**附加组可以有多个。**
+
+第五个字段：用户说明信息。可选项，可以不加。
+
+第六个字段：家目录
+
+​         超级用户：/root/
+
+​         普通用户：/home/用户名/
+
+第七个字段：登录之后的shell
+
+​          暂时禁用用户时，可以在此操作改成usr/sbin/nologin
+
+#### 2./etc/shadow
+
+保存加密的密码串，在passwd里面只有密码标志X
+
+```shell
+root@wintrys:~# vi /etc/shadow
+
+root:$6$UDJx7OJurgAffO6t$hCQBBzH9qcVdm07OYo0VouZRwOnFS9jDfx6aNV1xF5EIO6ELItQ9P0kJMVnk1wapMGI7u.OnyY9Bp4aywPt2x1:18994:0:99999:7:::
+daemon:*:18375:0:99999:7:::
+bin:*:18375:0:99999:7:::
+sys:*:18375:0:99999:7:::
+sync:*:18375:0:99999:7:::
+games:*:18375:0:99999:7:::
+man:*:18375:0:99999:7:::
+lp:*:18375:0:99999:7:::
+mail:*:18375:0:99999:7:::
+news:*:18375:0:99999:7:::
+uucp:*:18375:0:99999:7:::
+proxy:*:18375:0:99999:7:::
+www-data:*:18375:0:99999:7:::
+backup:*:18375:0:99999:7:::
+list:*:18375:0:99999:7:::
+irc:*:18375:0:99999:7:::
+gnats:*:18375:0:99999:7:::
+nobody:*:18375:0:99999:7:::
+systemd-network:*:18375:0:99999:7:::
+systemd-resolve:*:18375:0:99999:7:::
+systemd-timesync:*:18375:0:99999:7:::
+messagebus:*:18375:0:99999:7:::
+syslog:*:18375:0:99999:7:::
+_apt:*:18375:0:99999:7:::
+uuidd:*:18801:0:99999:7:::
+tcpdump:*:18801:0:99999:7:::
+ntp:*:18801:0:99999:7:::
+sshd:*:18801:0:99999:7:::
+systemd-coredump:!!:18801::::::
+_chrony:*:18801:0:99999:7:::
+liwanlin:$6$V3ySS0XFuR6Uioq/$P9la5DJW1RNQN2RUA1tJlrw6D3morEQzGl45zJy2gfukm00BIamacrEhwJTjEO5Fowqqk/cUcDFSuT/lmnfK..:18999:0:99999:7:::
+~                                                                                                     
+```
+
+第一个字段：用户名
+
+第二个字段：加密密码
+
+​			加密算法升级为SHA512散列加密算法
+
+​			如果密码位是!!或*  代表没有密码，不能登录
+
+​            在用户密码前＋个！，可以禁用用户登录
+
+第三个字段：密码最后一次更改时间
+
+第四个字段：两次密码的修改间隔时间  默认是0，假如是10，就是10天之后才能改
+
+第五个字段：密码有效期   假如参数是90   那么90天之后必须改密码
+
+第六个字段：密码修改到期前的警告时间  7    到第83天会提醒你改密码
+
+第七个字段：密码过期后的宽限时间     5     到95天还没改，会被封掉
+
+​			0:表示密码过期立即失效
+
+​			-1:表示密码永远不会失效
+
+第八个字段：账号失效时间
+
+​			要用时间戳表示
+
+第九个字段：保留
 
