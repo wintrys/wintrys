@@ -1066,3 +1066,7 @@ root@wintrys:/etc# runlevel
 N 5
 ```
 
+#### 5.logout
+
+退出登录命令
+
