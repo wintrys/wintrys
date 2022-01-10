@@ -1,4 +1,4 @@
-
+****
 
 # 0.系统分类
 
@@ -1329,3 +1329,685 @@ liwanlin:$6$V3ySS0XFuR6Uioq/$P9la5DJW1RNQN2RUA1tJlrw6D3morEQzGl45zJy2gfukm00BIam
 ​			要用时间戳表示
 
 第九个字段：保留
+
+#### 3./etc/group
+
+```shell
+root@wintrys:~# vim /etc/group
+
+root:x:0:
+daemon:x:1:
+bin:x:2:
+sys:x:3:
+adm:x:4:syslog
+tty:x:5:syslog
+disk:x:6:
+lp:x:7:
+mail:x:8:
+news:x:9:
+uucp:x:10:
+man:x:12:
+proxy:x:13:
+kmem:x:15:
+dialout:x:20:
+fax:x:21:
+voice:x:22:
+cdrom:x:24:
+floppy:x:25:
+tape:x:26:
+sudo:x:27:
+audio:x:29:
+dip:x:30:
+www-data:x:33:
+backup:x:34:
+operator:x:37:
+list:x:38:
+irc:x:39:
+src:x:40:
+gnats:x:41:
+shadow:x:42:
+utmp:x:43:
+video:x:44:
+sasl:x:45:
+```
+
+第一个字段：组名   
+
+第二个字段：组密码标志
+
+第三个字段：GID
+
+第四个字段：组中附加用户  (看不到初始用户)
+
+#### 4./etc/gshadow
+
+```shell
+root@wintrys:~# vim /etc/gshadow
+
+root:*::
+daemon:*::
+bin:*::
+sys:*::
+adm:*::syslog
+tty:*::syslog
+disk:*::
+lp:*::
+mail:*::
+news:*::
+uucp:*::
+man:*::
+proxy:*::
+kmem:*::
+dialout:*::
+fax:*::
+voice:*::
+cdrom:*::
+floppy:*::
+tape:*::
+sudo:*::
+audio:*::
+dip:*::
+www-data:*::
+backup:*::
+operator:*::
+list:*::
+irc:*::
+src:*::
+gnats:*::
+shadow:*::
+utmp:*::
+video:*::
+sasl:*::
+```
+
+第一个字段：组名
+
+第二个字段: 组密码
+
+第三个字段：组管理员用户名
+
+第四个字段：组中附加用户
+
+### 2.用户管理的相关文件
+
+#### 1./home
+
+普通用户: /home/用户名      所有者和所属组都是此用户，权限700  $:普通用户
+
+```shell
+root@wintrys:~# ls -l /home/
+total 4
+drwxr-xr-x 4 liwanlin liwanlin 4096 Jan  9 23:04 liwanlin
+```
+
+超级用户：/root 所有者和所属组都是root  权限550   #：管理员
+
+#### 2./var/spool/mail
+
+ 用户的邮箱
+
+#### 3./etc/skel
+
+#### 用户模板目录
+
+```shell
+root@wintrys:/etc/skel# ls -al
+total 20
+drwxr-xr-x  2 root root 4096 Jun 23  2021 .
+drwxr-xr-x 85 root root 4096 Jan 10 13:44 ..
+-rw-r--r--  1 root root  220 Feb 25  2020 .bash_logout
+-rw-r--r--  1 root root 3771 Feb 25  2020 .bashrc
+-rw-r--r--  1 root root  807 Feb 25  2020 .profile
+```
+
+上面为模板，创建新用户会默认把这边模板文件加到新用户目录下
+
+```shell
+root@wintrys:/home/liwanlin# ls -l 
+total 0
+root@wintrys:/home/liwanlin# ls -al  这些隐藏文件都是模板自动生成
+total 36
+drwxr-xr-x 4 liwanlin liwanlin 4096 Jan  9 23:04 .
+drwxr-xr-x 3 root     root     4096 Jan  7 16:57 ..
+-rw------- 1 liwanlin liwanlin   81 Jan 10 01:17 .bash_history
+-rw-r--r-- 1 liwanlin liwanlin  220 Feb 25  2020 .bash_logout
+-rw-r--r-- 1 liwanlin liwanlin 3771 Feb 25  2020 .bashrc
+drwx------ 2 liwanlin liwanlin 4096 Jan  7 17:00 .cache
+-rw-r--r-- 1 liwanlin liwanlin  807 Feb 25  2020 .profile
+drwxr-xr-x 2 liwanlin liwanlin 4096 Jan  9 21:30 .rpmdb
+-rw------- 1 liwanlin liwanlin  879 Jan  9 23:04 .viminfo
+```
+
+### 3.用户管理命令
+
+#### 1.useradd
+
+-u UID   手工指定用户UID
+
+-d 家目录  手动指定家目录
+
+-s  shell  手动指定用户的登录shell   默认：/bin/bash
+
+```shell
+root@wintrys:~# useradd lihuazhen -m
+root@wintrys:~# cd /home/
+root@wintrys:/home# ls -l
+total 8
+drwxr-xr-x 2 lihuazhen lihuazhen 4096 Jan 10 14:03 lihuazhen
+drwxr-xr-x 4 liwanlin  liwanlin  4096 Jan  9 23:04 liwanlin
+```
+
+**ubantu添加用户要加上 -m  不然不会生成家目录**
+
+#### 2.passwd
+
+passwd [选项]  用户名
+
+```shell
+root@wintrys:~# passwd lihuazhen 
+New password:
+```
+
+#### 3.usermod
+
+修改用户信息
+
+-u UID   手工指定用户UID
+
+-d 家目录  手动指定家目录
+
+-s  shell  手动指定用户的登录shell   默认：/bin/bash
+
+#### 4.userdel
+
+删除用户
+
+-r 删除用户的同时删除用户嘉沐旅馆
+
+```shell
+root@wintrys:~# userdel -r lihuazhen 
+userdel: lihuazhen mail spool (/var/mail/lihuazhen) not found
+root@wintrys:~# cd /home/
+root@wintrys:/home# ls
+liwanlin
+```
+
+#### 5.id
+
+查看用户UID等信息
+
+```shell
+root@wintrys:/home# id liwanlin
+uid=1000(liwanlin) gid=1000(liwanlin) groups=1000(liwanlin)
+```
+
+#### 6.su
+
+切换用户身份
+
+su [选项] 用户名
+
+**“-” 这个符号代表连带用户的环境变量一起切换，切用户时一定要带上**
+
+-c 近执行一次命令，而不切换用户身份
+
+```shell
+root@wintrys:~# su - liwanlin
+liwanlin@wintrys:~$ ls
+```
+
+超级用户切普通用户，不需要输入密码，反之需要。
+
+### 4.用户组管理命令
+
+#### 1.groupadd
+
+添加用户组
+
+groupadd [选项] 组名
+
+-g  GID  指定组ID
+
+#### 2.groupmod
+
+修改用户组
+
+-n 新组名
+
+```shell
+root@wintrys:~# groupadd linxia   #新增
+root@wintrys:~# groupmod -n gansu linxia  #改名
+```
+
+#### 3.groupdel
+
+删除用户组
+
+组有初始用户就不能删除
+
+# 8.权限管理
+
+### 1.ACL权限
+
+#### 1.简介与开启
+
+解决除了ugo之外的权限管理场景
+
+dumpe2fs -h /dev/vdal  查询分区表的详细信息，可以叨叨是否开启acl
+
+#### 2.查看设定acl权限
+
+getfacle 文件名 查看ack
+
+setfacl     设定acl
+
+### 2.sudo权限
+
+**root把本来只有管理员用户执行的命令赋予普通用户执行**
+
+sudo的操作对象是系统命令
+
+```shell
+root@wintrys:~# visudo
+
+  GNU nano 4.8             /etc/sudoers.tmp                        
+#
+# This file MUST be edited with the 'visudo' command as root.
+#
+# Please consider adding local content in /etc/sudoers.d/ instead >
+# directly modifying this file.
+#
+# See the man page for details on how to write a sudoers file.
+#
+Defaults        env_reset
+Defaults        mail_badpass
+Defaults        secure_path="/usr/local/sbin:/usr/local/bin:/usr/s>
+
+# Host alias specification
+
+# User alias specification
+
+# Cmnd alias specification
+
+# User privilege specification
+root    ALL=(ALL:ALL) ALL
+
+# Members of the admin group may gain root privileges
+%admin ALL=(ALL) ALL
+
+# Allow members of group sudo to execute any command
+%sudo   ALL=(ALL:ALL) ALL
+
+# See sudoers(5) for more information on "#include" directives:
+
+#includedir /etc/sudoers.d
+```
+
+在这个配置文件栏给用户加执行权限
+
+# 9.文件系统管理
+
+### 1.分区和文件系统
+
+第一讲
+
+### 2.文件系统常用命令
+
+#### 1.df 
+
+统计文件系统的空间占用情况  （面向文件系统）
+
+```shell
+root@wintrys:~# df
+Filesystem     1K-blocks    Used Available Use% Mounted on
+udev              988136       0    988136   0% /dev
+tmpfs             203516     700    202816   1% /run
+/dev/vda1       41152812 5117816  34131340  14% /
+tmpfs            1017568       0   1017568   0% /dev/shm
+tmpfs               5120       0      5120   0% /run/lock
+tmpfs            1017568       0   1017568   0% /sys/fs/cgroup
+tmpfs             203512       0    203512   0% /run/user/0
+tmpfs             203512       0    203512   0% /run/user/1000
+```
+
+-a  显示所有信息
+
+-h 使用习惯单位显示容量
+
+#### 2.du
+
+统计目录或文件的大小  (面向文件)
+
+```shell
+root@wintrys:~# du ./zbx -h
+4.0K    ./zbx/视频
+35M     ./zbx/上海2021-4
+1.5M    ./zbx/I012jk/合同/北京2021.1-2/北京2021-1
+736K    ./zbx/I012jk/合同/北京2021.1-2/北京2021-2/沈阳德睿-209
+1.3M    ./zbx/I012jk/合同/北京2021.1-2/北京2021-2/北京财税-207
+13M     ./zbx/I012jk/合同/北京2021.1-2/北京2021-2
+14M     ./zbx/I012jk/合同/北京2021.1-2
+```
+
+#### 3.fsck
+
+文件修复命令
+
+#### 4.dumpe2fs
+
+显示磁盘状态
+
+#### 5.mount
+
+挂载设备
+
+### 3.fdisk分区
+
+待学习补充
+
+# 10.Shell基础
+
+### 1.shell概述
+
+命令行解释器， 编程语言
+
+### 2.执行方式
+
+#### 1.echo
+
+```shell
+root@wintrys:~# echo 'hello world!'
+hello world!
+```
+
+-e  支持转义字符     \b 退格键，向左删除
+
+```shell
+root@wintrys:~# echo -e 'ab\bc'    
+ac
+```
+
+1.赋予执行权限，直接运行    常用此方式 
+
+```shell
+root@wintrys:~/lee# chmod 755 hello.sh 
+root@wintrys:~/lee# ./hello.sh 
+我的第一个shell脚本
+```
+
+2.通过bash调用执行脚本    不需要加权限
+
+```shell
+root@wintrys:~/lee# bash hello.sh 
+我的第一个shell脚本
+```
+
+### 3.Bash的基本功能
+
+#### 1.histroy
+
+历史命令
+
+-w 将缓存中的历史命令写入历史命令文件保存  /bash_history
+
+-c  清空历史命令  缓存和文件里的都会被清空
+
+2.补全
+
+tab     两次tab出现一个list
+
+```shell
+root@wintrys:~/lee# user
+useradd  userdel  usermod  users
+```
+
+#### 2alias
+
+命令别名与快捷键
+
+```shell
+root@wintrys:~/lee# alias
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias grep='grep --color=auto'
+alias l='ls -CF'
+alias la='ls -A'
+alias ll='ls -alF'
+alias ls='ls --color=auto'
+```
+
+#### 3.输入输出重定向
+
+正常输出：
+
+命令 > 文件  （覆盖）
+
+命令 >> 文件  (追加)
+
+错误输出要加2
+
+命令 2> 文件  （覆盖）
+
+命令 2>> 文件  (追加)
+
+正常错误都会写入：
+
+命令 &> 文件  （覆盖）
+
+命令 &>> 文件  (追加)
+
+文件分开写：
+
+**命令 >>文件1 2>>文件2**
+
+输入重定向：
+
+wc  [选项] [文件名]
+
+#### 4.多命令顺序执行
+
+； 命令1；命令2    互相没有关系
+
+```shell
+root@wintrys:~/lee# ls;date;cd /kk;pwd   #其中一个报错也不影响
+A  C         ip.txt   newname.conf       newname.conf.soft
+B  hello.sh  lwl.txt  newname.conf.hard
+Mon 10 Jan 2022 07:28:06 PM CST
+-bash: cd: /kk: No such file or directory
+/root/lee
+```
+
+&&  命令1&&命令2   逻辑与                             有先后关系的场景用
+
+```shell
+root@wintrys:~/lee# ls && echo yes   第一条成功则执行第二条
+A  C         ip.txt   newname.conf       newname.conf.soft
+B  hello.sh  lwl.txt  newname.conf.hard
+yes
+root@wintrys:~/lee# ls llll && echo yes 第一条失败第二条不会执行
+ls: cannot access 'llll': No such file or directory
+```
+
+||   命令1||命令2     逻辑或
+
+```shell
+root@wintrys:~/lee# ls || echo yes      成功则退出
+A  C         ip.txt   newname.conf       newname.conf.soft
+B  hello.sh  lwl.txt  newname.conf.hard
+root@wintrys:~/lee# ls llll || echo yes  
+ls: cannot access 'llll': No such file or directory
+yes
+```
+
+#### 5.管道符
+
+命令1 |  命令2
+
+**命令1的正确输出作为命令2的操作对象**
+
+```shell
+root@wintrys:~/lee# netstat -an |grep 'ESTABLISHED'
+tcp        0      0 172.17.228.126:43938    100.100.30.26:80        ESTABLISHED
+tcp        0     52 172.17.228.126:22       123.139.18.226:27578    ESTABLISHED
+```
+
+如果命令1没有输出，或者报错，命令2就不会执行
+
+6.通配符和其他符号
+
+```shell
+root@wintrys:~/lee# ls -l *.txt
+-rw-r--r-- 1 root root 32 Jan 10 18:35 ip.txt
+-rwxrw-r-- 1 root root 97 Jan  6 19:57 lwl.txt
+```
+
+### 4.Bash的变量
+
+查看系统里的所有变量用 set命令
+
+删除变量用 unset 变量名
+
+#### 1.自定义变量
+
+**只在当前shell中生效**，默认都是字符串类型，如果要进行数值运算，则必须指定变量类型为数值型
+
+**变量用“=”链接，左右两侧不能加空格**
+
+```shell
+root@wintrys:~/lee# name=lihuazhen
+root@wintrys:~/lee# echo $name  
+lihuazhen
+```
+
+如果把命令的结果赋给变量，则需使用$()
+
+```shell
+root@wintrys:~/lee# time=$(date)
+root@wintrys:~/lee# echo time    打印变量要加$
+time
+root@wintrys:~/lee# echo $time
+Mon 10 Jan 2022 08:01:24 PM CST
+```
+
+变量叠加
+
+```shell
+root@wintrys:~/lee# aa=123
+root@wintrys:~/lee# aa="$aa"456     第一种
+root@wintrys:~/lee# echo $aa
+123456
+root@wintrys:~/lee# aa=${aa}789     第二种
+root@wintrys:~/lee# echo $aa   
+123456789
+```
+
+#### 2.环境变量
+
+**在当前shell和这个shell的所有子shell当中生效。如果把环境变量写入相应的配置文件，那么就会在所有的shell生效**。
+
+申明： **export 变量名=变量值**
+
+查询：env
+
+```shell
+root@wintrys:~/lee# env
+SHELL=/bin/bash
+PWD=/root/lee
+LOGNAME=root
+XDG_SESSION_TYPE=tty
+MOTD_SHOWN=pam
+HOME=/root
+LANG=en_US.UTF-8
+OLDPWD=/root
+```
+
+删除：unset
+
+#### 3.位置参数变量
+
+$n ：n为数字，$0代表本身 1-9 第一道第九个参数。
+
+$*：命令行中代表所有参数   循环遍历只执行一次    理解为一个字符串
+
+$@：区别对待     循环遍历会执行多次      理解为数组
+
+$#：参数个数
+
+```shell
+root@wintrys:~/lee# vim hello.sh 
+
+#!/bin/bash
+# liwanlin
+echo "我的第一个shell脚本"
+echo $0
+echo $1
+echo $2
+echo $*   
+echo $@
+echo $#
+
+
+root@wintrys:~/lee# chmod 777 hello.sh 
+root@wintrys:~/lee# ./hello.sh "可乐" “橙汁”
+我的第一个shell脚本
+./hello.sh
+可乐
+“橙汁”
+可乐 “橙汁” 
+可乐 “橙汁”
+2
+```
+
+#### 4.预定义变量
+
+$?：命令执行的返回状态，值为0表示执行成功，反之是失败
+
+```shell
+root@wintrys:~/lee# echo $?
+0
+root@wintrys:~/lee# ls kkl
+ls: cannot access 'kkl': No such file or directory
+root@wintrys:~/lee# echo $?
+2
+root@wintrys:~/lee# lssss
+lssss: command not found
+root@wintrys:~/lee# echo $?
+127
+```
+
+$$：当前进程的进程号(PID)
+
+```shell
+root@wintrys:~/lee# vim hello.sh            
+
+#!/bin/bash
+# liwanlin
+echo "我的第一个shell脚本"
+echo $$
+
+root@wintrys:~/lee# ./hello.sh "可乐" “橙汁”
+我的第一个shell脚本
+24587
+```
+
+$!：最后一个进程号
+
+接受键盘输入
+
+**read [选项] [变量名]**
+
+```shell
+root@wintrys:~/lee# vim canshu.sh
+
+#!/bin/bash
+read -t 30 -p "请输入名字：" name
+echo $name
+
+
+root@wintrys:~/lee# chmod 777 canshu.sh 
+root@wintrys:~/lee# ./canshu.sh 
+请输入名字：liwanlin
+liwanlin
+```
+
+### 5.Bash的运算符
