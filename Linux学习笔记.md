@@ -1996,6 +1996,14 @@ $!：最后一个进程号
 
 **read [选项] [变量名]**
 
+-p  提示信息
+
+-t 等待时间
+
+-n  限制字符大小
+
+-s 隐藏输入的数据
+
 ```shell
 root@wintrys:~/lee# vim canshu.sh
 
@@ -2011,3 +2019,1115 @@ liwanlin
 ```
 
 ### 5.Bash的运算符
+
+#### **1.declare**
+
+声明变量类型
+
+```shell
+root@wintrys:~/lee# a=11
+root@wintrys:~/lee# b=22
+root@wintrys:~/lee# c=$a+$b
+root@wintrys:~/lee# echo $c   #默认是字符串类型，直接相加就就是字符串拼接
+11+22
+root@wintrys:~/lee# declare -i cc=$a+$b
+root@wintrys:~/lee# echo $cc
+33
+```
+
+#### 2.express (let)
+
+```shell
+root@wintrys:~/lee# a=11
+root@wintrys:~/lee# b=22
+root@wintrys:~/lee# c=$a+$b
+root@wintrys:~/lee# echo $c
+11+22
+root@wintrys:~/lee# dd=$(expr $a + $b)  # 加号两边必须有空格
+root@wintrys:~/lee# echo $dd
+33
+```
+
+#### 3.$((运算式))  
+
+脚本里常用
+
+```shell
+root@wintrys:~/lee# ff=$(($a+$b))
+root@wintrys:~/lee# echo $ff
+33
+
+root@wintrys:~/lee# gg=$[$a+$b]  #这种方式也可以
+root@wintrys:~/lee# echo $gg
+33
+```
+
+### 6.环境变量配置文件
+
+source 配置文件
+
+issue 配置文件   欢迎界面
+
+```shell
+root@wintrys:~# cat /etc/issue
+Ubuntu 20.04.2 LTS \n \l
+```
+
+# 11.Shell编程
+
+### 1.正则表达式
+
+**正则表达式用来匹配文件内容   grep awk sed**
+
+```shell
+root@wintrys:~/lee# grep 'better' python_chan.txt 
+Beautiful is better than ugly.
+Explicit is better than implicit.
+Simple is better than complex.
+Complex is better than complicated.
+Flat is better than nested.
+Sparse is better than dense.
+Now is better than never.
+Although never is often better than *right* now.
+root@wintrys:~/lee#
+
+root@wintrys:~/lee# grep '^S' python_chan.txt   以S开头的行   
+Simple is better than complex.
+Sparse is better than dense.
+Special cases aren't special enough to break the rules.
+```
+
+包含匹配
+
+**通配符用来匹配文件名    ls find cp**
+
+```shell
+root@wintrys:~# cd lee/
+root@wintrys:~/lee# ls -l *.sh
+-rwxrwxrwx 1 root root  63 Jan 10 23:18 canshu.sh
+-rwxrwxrwx 1 root root 113 Jan 10 23:08 hello.sh
+```
+
+完全匹配
+
+?  *   []
+
+### 2.字符截取命令
+
+#### 1.cut
+
+提取符合条件的列 ，grep是提取行
+
+-f 列号
+
+-d 分割符号            有空格是不能使用
+
+```shell
+root@wintrys:~/lee# cut -d ":" -f 1,3 /etc/passwd 
+root:0
+daemon:1
+bin:2
+sys:3
+sync:4
+games:5
+man:6
+lp:7
+mail:8
+news:9
+```
+
+与grep配合使用
+
+```shell
+root@wintrys:~# cat /etc/passwd | grep /bin/bash | cut -d ":" -f 1
+root
+liwanlin
+```
+
+#### 2.printf
+
+格式化输出
+
+```shell
+root@wintrys:~# printf 1234
+1234root@wintrys:~# printf %s 1234
+1234root@wintrys:~# printf %s %s %s 1234
+%s%s1234root@wintrys:~# printf '%s %s %s' 1234  #必须加单引号才能生效
+1234  root@wintrys:~# printf '%s %s %s' 1 2 34
+1 2 34root@wintrys:~# printf '%s %s %s' 1234  
+1234  root@wintrys:~# printf '%s %s %s' 1 2 3 4 5 6
+1 2 34 5 6root@wintrys:~# printf '%s %s %s\n' 1 2 3 4 5 6
+1 2 3
+4 5 6
+```
+
+#### 3.awk
+
+用来列截取数据
+
+awk '条件1 {动作1} 条件2 {动作2}' 文件名
+
+printf 要手动表换行符
+
+print 自动加换行符
+
+```shell
+root@wintrys:~# df -h
+Filesystem      Size  Used Avail Use% Mounted on
+udev            965M     0  965M   0% /dev
+tmpfs           199M  668K  199M   1% /run
+/dev/vda1        40G  4.9G   33G  14% /
+tmpfs           994M     0  994M   0% /dev/shm
+tmpfs           5.0M     0  5.0M   0% /run/lock
+tmpfs           994M     0  994M   0% /sys/fs/cgroup
+tmpfs           199M     0  199M   0% /run/user/0
+root@wintrys:~# df -h | awk '{print $1 "\t" $5 "\t" $6}'
+Filesystem      Use%    Mounted
+udev    0%      /dev
+tmpfs   1%      /run
+/dev/vda1       14%     /
+tmpfs   0%      /dev/shm
+tmpfs   0%      /run/lock
+tmpfs   0%      /sys/fs/cgroup
+tmpfs   0%      /run/user/0
+```
+
+  某个盘符的剩余空间
+
+```shell
+root@wintrys:~# df -h | grep /dev/vda1
+/dev/vda1        40G  4.9G   33G  14% /
+root@wintrys:~# df -h | grep /dev/vda1 | awk '{print $5}'
+14%
+root@wintrys:~# df -h | grep /dev/vda1 | awk '{print $5}' | cut -d '%'
+cut: you must specify a list of bytes, characters, or fields
+Try 'cut --help' for more information.
+root@wintrys:~# df -h | grep /dev/vda1 | awk '{print $5}' | cut -d '%' -f 1
+14
+```
+
+BENGIN  : 在所有数据读取之前执行
+
+END：在所有数据读取之后执行
+
+```shell
+root@wintrys:~# df -h | grep /dev/vda1 | awk 'BEGIN{print "this is begin"}{print $1 "\t" $5}END{print "this is end"}'
+this is begin
+/dev/vda1       14%
+this is end
+```
+
+#### 4.sed
+
+轻量级流编辑器，用来将数据进行选取，替换，删除，新增的命令
+
+sed [选项] ‘[动作]’ 文件名
+
+-n 输出到屏幕
+
+-e：允许多天命令编辑
+
+-i：修改结果直接修改读取数据的文件
+
+动作：
+
+a\：追加
+
+c\：替换
+
+i\：插入
+
+d:删除
+
+p：
+
+s:
+
+### 3.字符处理命令
+
+#### 1.sort
+
+```shell
+root@wintrys:~# sort /etc/passwd   按字母排
+_apt:x:105:65534::/nonexistent:/usr/sbin/nologin
+backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+_chrony:x:110:121:Chrony daemon,,,:/var/lib/chrony:/usr/sbin/nologin
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+games:x:5:60:games:/usr/games:/usr/sbin/nologinshe
+```
+
+-r 取反
+
+```shell
+root@wintrys:~# sort -r /etc/passwd
+www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+uuidd:x:106:112::/run/uuidd:/usr/sbin/nologin
+uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
+tcpdump:x:107:113::/nonexistent:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+systemd-timesync:x:102:104:systemd Time Synchronization,,,:/run/systemd:/usr/sbin/nologin
+```
+
+#### 2.wc
+
+wc [选项] 文件名
+
+-l: 只统计行数
+
+-w: 只统计单词数
+
+-m:只统计字符数
+
+```shell
+root@wintrys:~# wc /etc//passwd
+  31   44 1653 /etc//passwd       统计该文件有31行，44个单词  1653个字符
+```
+
+### 4.条件判断
+
+#### 1.判断文件是否存在
+
+-e  是否存在
+
+-f  是否为普通文件
+
+```shell
+root@wintrys:~# test -e /root/instal.log    第一种
+root@wintrys:~# echo $?                    前面学过$?  返后0表示存在，非0不存在
+1
+
+root@wintrys:~# [ -e /root/lee/canshu.sh ]   第二种
+root@wintrys:~# echo $?
+0
+```
+
+#### 2.判断文件权限
+
+-r 是否有读权限
+
+-w 是否有写权限
+
+-r  是否有执行权限
+
+```shell
+root@wintrys:~# [ -w /root/lee/canshu.sh ] && echo yes ||echo no    不能识别具体身份权限
+yes
+```
+
+#### 3.判断两文件关系
+
+文件1 -nt 文件2   ：1的修改时间是否比2新
+
+文件1 -ot 文件2   ：1的修改时间是否比2旧
+
+文件1 -ef 文件2   ：1的inode号跟2时候一致，意思是否为同一个文件
+
+#### 4.判断整数之间关系
+
+-eq :相等
+
+-ne:不相等
+
+-gt：大于
+
+-lt：小于
+
+-ge：大于等于
+
+-le:小于等于
+
+```shell
+root@wintrys:~# [ 23 -eq 23 ] && echo yes ||echo no
+yes
+```
+
+#### 5.判断字符串
+
+-z 字符串是否为空
+
+-n 是否非空
+
+==  相等
+
+!= 不相等
+
+```shell
+root@wintrys:~# name=liwanlin
+root@wintrys:~# [ -z "$name" ] && echo yes ||echo no  
+no
+root@wintrys:~# [ -z "$age" ] && echo yes ||echo no    
+yes
+
+
+root@wintrys:~# [ lee == lee ] && echo yes ||echo no       
+yes
+```
+
+6.判断多重条件
+
+判断1 -a  判断2   逻辑与 都T，则T
+
+判断1 -o  判断2   逻辑或 有一个T，则T
+
+！判断  逻辑非  原始判断取反
+
+### 5.流程控制
+
+#### 1.单分支if
+
+if [ 条件 ] ；then
+
+   满足条件执行的代码
+
+fi
+
+或者
+
+if [ 条件 ]
+
+  then
+
+​       满足条件执行的代码
+
+fi
+
+注意点：
+
+**1.if语句及时fi结尾**
+
+**2.[条件] 使用test命令判断，所以中括号与条件式之间要有空格**
+
+**3.then后跟符合条件的代码，放在[]后面要加“；”,也可以换行，就不需要加“；”了**
+
+```shell
+#!/bin/bash
+#统计根分区使用率
+
+rate=$(df -h | grep '/dev/vda1' |awk '{print $5}' | cut -d "%" -f 1
+)
+
+if [ $rate -ge 80 ]
+   then
+           echo "Warning! /dev/vda1 is full!"
+fi
+```
+
+
+
+#### 2.双分支if
+
+if [ 条件 ]
+
+  then
+
+​       满足条件执行的代码
+
+  else
+
+​    不满足条件执行的代码
+
+fi
+
+```shell
+#!/bin/bash
+date=$(date +%y%m%d)
+size=$(du -sh /etc)
+
+if [ -d /temp/dbback ]
+        then
+                echo "Date is:$date" > /tmp/dbback/db.txt
+                echo "Size is:$size" >> /tmp/dbback/db.txt
+                cd /tmp/dbback
+                tar -zcf etc_$date.tar.gz /etc db.txt &>/dev/null
+                rm -rf /tmp/dbback/db.txt
+        else
+                mkdir /tmp/dbback
+                echo "Date is:$date" > /tmp/dbback/db.txt
+                echo "Size is:$size" >> /tmp/dbback/db.txt                                      
+                cd /tmp/dbback                                  
+                tar -zcf etc_$date.tar.gz /etc db.txt &>/dev/nll 
+                rm -rf /tmp/dbback/db.txt
+fi             
+```
+
+执行结果：
+
+```shell
+root@wintrys:~/lee# chmod 777 if_xuexi2.sh 
+root@wintrys:~/lee# ./if_xuexi2.sh 
+root@wintrys:~/lee# cd /tmp/
+root@wintrys:/tmp# ls
+AliyunAssistClientSingleLock.lock  systemd-private-9d6b3901efbd46329b25d7d1e7c6e854-chrony.service-ROcSSh
+CmsGoAgent.pid                     systemd-private-9d6b3901efbd46329b25d7d1e7c6e854-systemd-logind.service-jAYy2g
+dbback                             systemd-private-9d6b3901efbd46329b25d7d1e7c6e854-systemd-resolved.service-ODCJqh
+root@wintrys:/tmp# cd dbback/
+root@wintrys:/tmp/dbback# ls
+etc_220112.tar.gz
+```
+
+3.多分支if
+
+if [ 条件 ]
+
+  then
+
+​       满足条件执行的代码
+
+elif [ 条件 ]
+
+   then
+
+​        满足条件执行的代码
+
+  else
+
+​    不满足条件执行的代码
+
+fi
+
+#### 3.流程控制-case
+
+case $变量名 in
+
+  “值1”）
+
+​       执行符合条件代码
+
+​       ;;
+
+“值2”）
+
+​       执行符合条件代码
+
+​       ;;
+
+esac
+
+注意：
+
+**1.case开头  esac结尾**
+
+**2.条件之间用 ;;隔开**
+
+```shell
+#!/bin/bash
+  
+echo 'you want to shanghai please input "1"'
+echo 'you want to beijing please input "2"'
+echo 'you want to xian please input "3"'
+
+read  -t 30 -p "please input your choose: " cho
+
+case "$cho" in
+        "1")
+                echo "你想去上海！"
+                ;;
+        "2")
+                echo "你想去北京！"
+                ;;
+        "3")
+                echo "你想去西安！"
+                ;;
+        *)
+                echo "你想上天吗？"
+                ;;
+esac
+```
+
+打印
+
+```shell
+root@wintrys:~/lee# ./case_xuexi.sh  
+you want to shanghai please input "1"
+you want to beijing please input "2"
+you want to xian please input "3"
+please input your choose: 3
+你想去西安！
+root@wintrys:~/lee# ./case_xuexi.sh 
+you want to shanghai please input "1"
+you want to beijing please input "2"
+you want to xian please input "3"
+please input your choose: 4
+你想上天吗？
+```
+
+#### 4.for循环
+
+1.for  变量 in 值1 值2 值3  ...
+
+​     do
+
+​           执行代码
+
+​    done
+
+```shell
+#!/bin/bash
+#打印时间
+
+for i in 1 2 3 4 5
+        do
+                echo $i
+        done
+        
+        
+root@wintrys:~/lee# chmod 755 for_xuexi.sh 
+root@wintrys:~/lee# ./for_xuexi.sh 
+1
+2
+3
+4
+5
+```
+
+2.for ((初始值;循环控制条件;变量变化))
+
+​	do
+
+​			要执行的代码
+
+​	done
+
+```shell
+#!/bin/bash
+#求100内的和
+
+s=0
+
+for (( i=1;i<=100;i=i+1))
+        do
+                s=$(( $s+$i ))    # 数值运算要用(())括起来。前面学过
+        done
+echo $s
+
+
+root@wintrys:~/lee# ./for_xuexi2.sh  
+5050
+```
+
+#### 5.while循环
+
+只要满足条件就执行
+
+while [ 条件 ]
+
+​	do
+
+​		要执行的代码
+
+​	done
+
+#### 6.until循环
+
+只要不满足条件就执行
+
+until [ 条件 ]
+
+​	do
+
+​		要执行的代码
+
+​	done
+
+# 12.服务管理
+
+### 1.服务的分类
+
+RPM包默认安装的服务
+
+​		独立的服务
+
+​		j基于xinetd服务
+
+源码包安装的服务
+
+### 2.独立服务管理
+
+service 独立服务名 start|stop|restart|status
+
+# 13.进程管理
+
+进程是正在执行的一个程序或者命令，每一个进程都是一个运行的实体，都有自己的地址空间，并占用一定的系统资源
+
+### 1.进程查看
+
+ps aux  用BSD标准命令格式  常用此命令
+
+```shell
+root@wintrys:~# ps aux
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root           1  0.0  0.5 167228 11028 ?        Ss   Jan02   0:07 /sbin/init noibrs
+root           2  0.0  0.0      0     0 ?        S    Jan02   0:00 [kthreadd]
+root           3  0.0  0.0      0     0 ?        I<   Jan02   0:00 [rcu_gp]
+root           4  0.0  0.0      0     0 ?        I<   Jan02   0:00 [rcu_par_gp]
+root           6  0.0  0.0      0     0 ?        I<   Jan02   0:00 [kworker/0:0H-kblockd]
+root           9  0.0  0.0      0     0 ?        I<   Jan02   0:00 [mm_percpu_wq]
+root          10  0.0  0.0      0     0 ?        S    Jan02   0:10 [ksoftirqd/0]
+```
+
+UESR：由那个用户产生
+
+PID：进程的id号                           pid=1的是一个init进程 系统调用的第一个进程。是所有进程的父进程
+
+TTY：终端类型        (tty本地终端   pts虚拟终端)
+
+STAT：进程状态   S 睡眠   R 运行   s 包含子进程 
+
+START：进程启动时间
+
+ps -le   用linux标准命令格式  不常用
+
+```shell
+root@wintrys:~# ps -le
+F S   UID     PID    PPID  C PRI  NI ADDR SZ WCHAN  TTY          TIME CMD
+4 S     0       1       0  0  80   0 - 41807 ep_pol ?        00:00:07 systemd
+1 S     0       2       0  0  80   0 -     0 kthrea ?        00:00:00 kthreadd
+1 I     0       3       2  0  60 -20 -     0 rescue ?        00:00:00 rcu_gp
+1 I     0       4       2  0  60 -20 -     0 rescue ?        00:00:00 rcu_par_gp
+1 I     0       6       2  0  60 -20 -     0 worker ?        00:00:00 kworker/0:0H-kblockd
+1 I     0       9       2  0  60 -20 -     0 rescue ?        00:00:00 mm_percpu_wq
+```
+
+top 进程健康状态
+
+```shell
+root@wintrys:~# top
+
+top - 17:58:12 up 10 days,  4:33,  2 users,  load average: 0.05, 0.01, 0.00
+Tasks:  83 total,   2 running,  81 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  0.3 us,  1.4 sy,  0.0 ni, 98.3 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+MiB Mem :   1987.4 total,   1052.7 free,    121.1 used,    813.6 buff/cache
+MiB Swap:      0.0 total,      0.0 free,      0.0 used.   1682.8 avail Mem 
+
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND                                                           
+    695 root      10 -10  112748  22116  15744 S   1.7   1.1 252:50.43 AliYunDun                                                         
+    575 root      20   0  756800  19484  11424 S   0.3   1.0  22:40.51 exe                                                               
+    938 root      10 -10  424028   6316   5844 S   0.3   0.3   6:33.89 AliSecGuard                                                       
+      1 root      20   0  167228  11028   8156 S   0.0   0.5   0:07.17 systemd                                                           
+      2 root      20   0       0      0      0 S   0.0   0.0   0:00.02 kthreadd                                                          
+      3 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 rcu_gp                                                            
+      4 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 rcu_par_gp                                                        
+      6 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/0:0H-kblockd                                              
+      9 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 mm_percpu_w
+```
+
+top : 系统当前时间  系统运行时长  当前登录用户数量 系统负载
+
+Tasks： 总数      zomie 僵尸进程   正在终止状态，如果长期不为0，则需手动操作
+
+CPU：cpu使用情况
+
+pstree
+
+```shell
+root@wintrys:~# pstree
+systemd─┬─AliSecGuard───6*[{AliSecGuard}]   #6*意思这个下面有6个子进程
+        ├─AliYunDun───23*[{AliYunDun}]
+        ├─AliYunDunUpdate───5*[{AliYunDunUpdate}]
+        ├─CmsGoAgent.linu─┬─exe───14*[{exe}]
+        │                 └─5*[{CmsGoAgent.linu}]
+        ├─accounts-daemon───2*[{accounts-daemon}]
+        ├─2*[agetty]
+        ├─aliyun-service───7*[{aliyun-service}]
+        ├─assist_daemon───7*[{assist_daemon}]
+        ├─atd
+        ├─chronyd───chronyd
+        ├─cron
+        ├─dbus-daemon
+        ├─networkd-dispat
+        ├─nginx───nginx
+        ├─rsyslogd───3*[{rsyslogd}]
+        ├─sshd─┬─sshd───bash
+        │      └─sshd───bash───pstree
+        ├─systemd───(sd-pam)
+        ├─systemd-journal
+        ├─systemd-logind
+        ├─systemd-network
+        ├─systemd-resolve
+        └─systemd-udevd
+```
+
+### 2.进程终止
+
+#### 1.kill
+
+kill  信号值   PID     **一定跟的pid**
+
+```shell
+root@wintrys:~# kill -l    #查看常用信号
+ 1) SIGHUP       2) SIGINT       3) SIGQUIT      4) SIGILL       5) SIGTRAP
+ 6) SIGABRT      7) SIGBUS       8) SIGFPE       9) SIGKILL     10) SIGUSR1
+11) SIGSEGV     12) SIGUSR2     13) SIGPIPE     14) SIGALRM     15) SIGTERM
+16) SIGSTKFLT   17) SIGCHLD     18) SIGCONT     19) SIGSTOP     20) SIGTSTP
+21) SIGTTIN     22) SIGTTOU     23) SIGURG      24) SIGXCPU     25) SIGXFSZ
+26) SIGVTALRM   27) SIGPROF     28) SIGWINCH    29) SIGIO       30) SIGPWR
+31) SIGSYS      34) SIGRTMIN    35) SIGRTMIN+1  36) SIGRTMIN+2  37) SIGRTMIN+3
+38) SIGRTMIN+4  39) SIGRTMIN+5  40) SIGRTMIN+6  41) SIGRTMIN+7  42) SIGRTMIN+8
+43) SIGRTMIN+9  44) SIGRTMIN+10 45) SIGRTMIN+11 46) SIGRTMIN+12 47) SIGRTMIN+13
+48) SIGRTMIN+14 49) SIGRTMIN+15 50) SIGRTMAX-14 51) SIGRTMAX-13 52) SIGRTMAX-12
+53) SIGRTMAX-11 54) SIGRTMAX-10 55) SIGRTMAX-9  56) SIGRTMAX-8  57) SIGRTMAX-7
+58) SIGRTMAX-6  59) SIGRTMAX-5  60) SIGRTMAX-4  61) SIGRTMAX-3  62) SIGRTMAX-2
+63) SIGRTMAX-1  64) SIGRTMAX
+```
+
+1：关闭，重新读取配置文件后重启
+
+9：强制终止
+
+15：正常终止进程
+
+kill -1  233    重启进程
+
+kill -9   233   强制终止进程
+
+#### 2.killall
+
+killall -9  nginx    **跟的进程名**
+
+#### 3.pkill
+
+跟killall一样用法
+
+-t   **可以根据终端号踢用户**
+
+```shell
+root@wintrys:~# w
+ 18:37:24 up 10 days,  5:12,  3 users,  load average: 0.03, 0.02, 0.00
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+root     pts/0    123.139.18.226   12:24    2:28m  0.25s  0.25s -bash
+root     pts/1    123.139.22.147   18:05    1.00s  0.04s  0.00s w
+liwanlin pts/2    123.139.22.147   18:37    5.00s  0.02s  0.02s -bash
+root@wintrys:~# pkill -9 -t pts/2
+```
+
+# 14.资源查看
+
+#### 1.vmstat
+
+vmastat  [刷新延时 刷新次数]
+
+```shell
+root@wintrys:~# vmstat 1 3    刷3此，每次间隔1s
+procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
+ r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st
+ 2  0      0 1070692 260452 574800    0    0     1     4   29   29  1  1 98  0  0
+ 0  0      0 1070684 260452 574800    0    0     0     0 1357 3043  1  2 97  0  0
+ 0  0      0 1070684 260452 574800    0    0     0     0 1365 3054  1  2 97  0  0
+```
+
+#### 2.dmesg
+
+开机时内核检查信息
+
+```shell
+root@wintrys:~# dmesg | grep CPU
+[    0.016744] smpboot: Allowing 2 CPUs, 1 hotplug CPUs
+[    0.016787] setup_percpu: NR_CPUS:8192 nr_cpumask_bits:2 nr_cpu_ids:2 nr_node_ids:1
+[    0.025569] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=2, Nodes=1
+[    0.042969] rcu:     RCU restricting CPUs from NR_CPUS=8192 to nr_cpu_ids=2.
+[    0.045642] random: crng done (trusting CPU's manufacturer)
+[    0.049871] TAA: Vulnerable: Clear CPU buffers attempted, no microcode
+[    0.049871] MDS: Vulnerable: Clear CPU buffers attempted, no microcode
+[    0.053282] smpboot: CPU0: Intel(R) Xeon(R) CPU E5-2682 v4 @ 2.50GHz (family: 0x6, model: 0x4f, stepping: 0x1)
+[    0.053282] Performance Events: unsupported p6 CPU model 79 no PMU driver, software events only.
+[    0.053282] smp: Bringing up secondary CPUs ...
+[    0.053282] smp: Brought up 1 node, 1 CPU
+[    0.521015] intel_pstate: CPU model not supported
+[    0.521026] ledtrig-cpu: registered to indicate activity on CPUs
+```
+
+#### 3.free
+
+查看内存使用状态
+
+-m 换算成M单位
+
+-g       g
+
+-k   同理
+
+-b    同理
+
+```shell
+root@wintrys:~# free
+              total        used        free      shared  buff/cache   available
+Mem:        2035140      129336     1070384        2228      835420     1717524
+```
+
+#### 4.uptime
+
+系统启动时间，平均负载
+
+```shell
+root@wintrys:~# uptime
+ 20:01:06 up 10 days,  6:36,  2 users,  load average: 0.00, 0.00, 0.00
+```
+
+#### 5.uname
+
+-a 所有信息
+
+-r  内核版本
+
+-s  内核名称
+
+```shell
+root@wintrys:~# uname -a
+Linux wintrys 5.4.0-77-generic #86-Ubuntu SMP Thu Jun 17 02:35:03 UTC 2021 x86_64 x86_64 x86_64 GNU/Linux
+root@wintrys:~# uname -r
+5.4.0-77-generic
+root@wintrys:~# uname -s
+Linux
+```
+
+#### 6.lsof
+
+查看进程调用或打开了那些文件
+
+# 15.定时任务
+
+1.crond服务
+
+用来做定时任务的服务
+
+```shell
+root@wintrys:~# ps aux | grep crond
+root       28269  0.0  0.0   9032   732 pts/1    S+   20:12   0:00 grep --color=auto crond
+```
+
+crontab [选项]
+
+-e 编辑
+
+-l 查询
+
+-r  删除
+
+```shell
+root@wintrys:~# crontab -e
+no crontab for root - using an empty one
+
+Select an editor.  To change later, run 'select-editor'.
+  1. /bin/nano        <---- easiest
+  2. /usr/bin/vim.basic
+  3. /usr/bin/vim.tiny
+  4. /bin/ed
+
+Choose 1-4 [1]: 2
+
+# Edit this file to introduce tasks to be run by cron.
+# 
+# Each task to run has to be defined through a single line
+# indicating with different fields when the task will be run
+# and what command to run for the task
+# 
+# To define the time you can provide concrete values for
+# minute (m), hour (h), day of month (dom), month (mon),
+# and day of week (dow) or use '*' in these fields (for 'any').
+# 
+# Notice that tasks will be started based on the cron's system
+# daemon's notion of time and timezones.
+# 
+# Output of the crontab jobs (including errors) is sent through
+# email to the user the crontab file belongs to (unless redirected).
+# 
+# For example, you can run a backup of all your user accounts
+# at 5 a.m every week with:
+# 0 5 * * 1 tar -zcf /var/backups/home.tgz /home/
+# 
+# For more information see the manual pages of crontab(5) and cron(8)
+# 
+# m h  dom mon dow   command
+
+* * * * * echo llll >> /tmp/test    每隔一分钟执行一次
+第一个*：min  0-59
+第二个*：h     0-23
+第三个*：d    1-31
+第四个*：m    1-12
+第五个*：w    0-7 (0和7都代表星期天)
+                                                                                                                                     
+"crontab.o2O1xk/crontab" 25L, 923C written
+crontab: installing new crontab
+root@wintrys:~# date
+Wed 12 Jan 2022 08:28:36 PM CST
+root@wintrys:~# cat /tmp/test 
+llll
+```
+
+删除定时任务
+
+```shell
+root@wintrys:~# crontab -r
+root@wintrys:~# crontab -l
+no crontab for root
+```
+
+# 16.日志管理
+
+ /var/log  系统的日志保存在这里
+
+#### 1.rsyslogd
+
+```shell
+root@wintrys:~# ps aux | grep rsyslogd
+syslog       481  0.0  0.2 224348  5072 ?        Ssl  Jan02   0:01 /usr/sbin/rsyslogd -n -iNONE
+root       28365  0.0  0.0   9032   728 pts/1    S+   20:45   0:00 grep --color=auto rsyslogd
+```
+
+日志格式：
+
+```shell
+root@wintrys:~# cat /var/log/auth.log | grep liwanlin
+Jan  9 00:06:47 wintrys sshd[19660]: pam_unix(sshd:session): session closed for user liwanlin
+Jan  9 00:11:58 wintrys sshd[19814]: pam_unix(sshd:session): session closed for user liwanlin
+Jan  9 00:35:39 wintrys sshd[20107]: pam_unix(sshd:session): session closed for user liwanlin
+Jan  9 21:05:50 wintrys sshd[21803]: Accepted password for liwanlin from 123.139.17.29 port 16345 ssh2
+Jan  9 21:05:50 wintrys sshd[21803]: pam_unix(sshd:session): session opened for user liwanlin by (uid=0)
+Jan  9 21:05:50 wintrys systemd-logind[510]: New session 1346 of user liwanlin.
+Jan  9 21:05:50 wintrys systemd: pam_unix(systemd-user:session): session opened for user liwanlin by (uid=0)
+Jan  9 21:06:09 wintrys sshd[21803]: pam_unix(sshd:session): session closed for user liwanlin
+Jan  9 21:06:14 wintrys sshd[21865]: Accepted password for liwanlin from 123.139.17.29 port 16350 ssh2
+Jan  9 21:06:14 wintrys sshd[21865]: pam_unix(sshd:session): session opened for user liwanlin by (uid=0)
+Jan  9 21:06:14 wintrys systemd-logind[510]: New session 1348 of user liwanlin.
+Jan  9 21:30:08 wintrys sshd[21984]: Accepted password for liwanlin from 123.139.17.29 port 13596 ssh2
+Jan  9 21:30:08 wintrys sshd[21984]: pam_unix(sshd:session): session opened for user liwanlin by (uid=0)
+```
+
+2.rsyslogd配置
+
+```shell
+root@wintrys:~# cat /etc/rsyslog.conf 
+# /etc/rsyslog.conf configuration file for rsyslog
+#
+# For more information install rsyslog-doc and see
+# /usr/share/doc/rsyslog-doc/html/configuration/index.html
+#
+# Default logging rules can be found in /etc/rsyslog.d/50-default.conf
+
+
+#################
+#### MODULES ####
+#################
+
+module(load="imuxsock") # provides support for local system logging
+#module(load="immark")  # provides --MARK-- message capability
+
+# provides UDP syslog reception
+#module(load="imudp")
+#input(type="imudp" port="514")
+
+# provides TCP syslog reception
+#module(load="imtcp")
+#input(type="imtcp" port="514")
+
+# provides kernel logging support and enable non-kernel klog messages
+module(load="imklog" permitnonkernelfacility="on")
+
+###########################
+#### GLOBAL DIRECTIVES ####
+###########################
+
+#
+# Use traditional timestamp format.
+# To enable high precision timestamps, comment out the following line.
+#
+$ActionFileDefaultTemplate RSYSLOG_TraditionalFileFormat
+
+# Filter duplicated messages
+$RepeatedMsgReduction on
+
+#
+# Set the default permissions for all log files.
+#
+$FileOwner syslog
+$FileGroup adm
+$FileCreateMode 0640
+$DirCreateMode 0755
+$Umask 0022
+$PrivDropToUser syslog
+$PrivDropToGroup syslog
+
+#
+# Where to place spool and state files
+#
+$WorkDirectory /var/spool/rsyslog
+
+#
+# Include all config files in /etc/rsyslog.d/
+#
+$IncludeConfig /etc/rsyslog.d/*.conf
+```
+
+# 17.启动管理
+
+查看运行级别
+
+```shell
+root@wintrys:~# runlevel 
+N 5
+```
+
+init 0  关机 
+
+init 6  重启
+
+```shell
+root@wintrys:~# vim /boot/grub/grub.cfg 
+
+#
+# DO NOT EDIT THIS FILE
+#
+# It is automatically generated by grub-mkconfig using templates
+# from /etc/grub.d and settings from /etc/default/grub
+#
+
+### BEGIN /etc/grub.d/00_header ###
+if [ -s $prefix/grubenv ]; then
+  set have_grubenv=true
+  load_env
+fi
+if [ "${initrdfail}" = 2 ]; then
+   set initrdfail=
+elif [ "${initrdfail}" = 1 ]; then
+   set next_entry="${prev_entry}"
+   set prev_entry=
+   save_env prev_entry
+   if [ "${next_entry}" ]; then
+      set initrdfail=2
+   fi
+fi
+if [ "${next_entry}" ] ; then
+   set default="${next_entry}"
+   set next_entry=
+   save_env next_entry
+   set boot_once=true
+else
+   set default="0"
+fi
+
+if [ x"${feature_menuentry_id}" = xy ]; then
+  menuentry_id_option="--id"
+else
+"/boot/grub/grub.cfg" [readonly] 268L, 8624C 
+```
+
+# 18.备份与恢复
+
+### 1.备份策略
+
+完全备份
+
+增量备份  dump
+
+### 2.dump
+
+dump [选项] 备份之后的文件名  源文件或目录
+
+-level：备份级别 0-9    0是完全备份 1-9增量备份
+
+-f  指定文件名
+
+### 3.restore
+
+恢复命令
